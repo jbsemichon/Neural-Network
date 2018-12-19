@@ -59,7 +59,7 @@ class Network(object):
                         activations.append(zs)
                         szs.append(layer_z)
                         count += 1
-                print("End of minibatch")
+                
         print("Epoch: %d" % (epoch))
         epoch += 1
     
