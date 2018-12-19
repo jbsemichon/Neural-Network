@@ -96,6 +96,7 @@ class Network(object):
             return [1,0]
 
     def activation_function(self,z):
+        #logistic function
         return 1/(1+numpy.exp(-z))
 
 
