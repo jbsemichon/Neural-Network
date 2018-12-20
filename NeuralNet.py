@@ -35,7 +35,7 @@ class Network(object):
 
     def SGD(self,size,num_layers,trainingdata,minibatch_size,epochs):
         epoch = 1
-        while epoch != epochs:
+        while epoch != (epochs + 1):
             random.shuffle(trainingdata)
             minibatches = [trainingdata[k:k+minibatch_size] for k in range(0,len(trainingdata),minibatch_size)]
             for minibatch in minibatches:
@@ -46,22 +46,32 @@ class Network(object):
                     szs = []
                     for layer in range(1,num_layers):
                         layer_z = []
-                        zs = []
+                        output = []
                         for neuron in range(size[layer]):
-                            z = 0
-                            xs = activations[count]
-                            ws = self.weights[count]
-                            for i in range(len(ws)):
-                                z += xs[i]*ws[i]
-                            layer_z.append(z)
-                            z += self.biases[count]
-                            zs.append(round(self.activation_function(z),4))
-                        activations.append(zs)
+                            weighted_sum = 0
+                            # Get input values
+                            input_values = activations[count]
+                            # Get weights
+                            weight = self.weights[count]
+                            for i in range(len(weight)):
+                                # Calculate weightings
+                                weighted_sum += input_values[i]*weight[i]
+                            layer_z.append(weighted_sum)
+                            # Add bias
+                            weighted_sum += self.biases[count]
+                            # Calculate activation function
+                            output.append(round(self.activation_function(weighted_sum),4))
+                        activations.append(output)
                         szs.append(layer_z)
                         count += 1
                 
-        print("Epoch: %d" % (epoch))
-        epoch += 1
+            print("Epoch: %d" % (epoch))
+            epoch += 1
+        print("Done!");
+        for layer in activations:
+            print("[")
+            [print(integer) for integer in layer]
+            print("]")
     
     def sigmoidprime(self,z):
         return (self.sigmoid(z) - (1 - self.sigmoid(z)))
@@ -81,6 +91,7 @@ class Network(object):
         count = 0
         for i in activation:
             cost = i-y[count]
+            # Squared loss function
             qcost.append(0.5* (cost ** 2))
             dcost.append(cost)
             count += 1
@@ -96,7 +107,7 @@ class Network(object):
             return [1,0]
 
     def activation_function(self,z):
-        #logistic function
+        # Logistic function
         return 1/(1+numpy.exp(-z))
 
 
@@ -111,7 +122,7 @@ def extract_data(dataset_len,testset_len):
         testdata.append(file.readline())
     return trainingdata,testdata
 
-epochs = 10
+epochs = 1
 lrate = 2
 trainingset_len = 100
 testset_len = 20
