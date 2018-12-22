@@ -28,7 +28,7 @@ class Network(object):
         layer = 1
         biases = []
         for i in range(num_layers-1):
-            for i in range(size[layer]):
+            for j in range((size[layer])):
                 biases.append(round(random.uniform(0,0.5),2))
             layer += 1
         return biases
@@ -52,7 +52,7 @@ class Network(object):
                             # Get input values
                             input_values = activations[count]
                             # Get weights
-                            weight = self.weights[count]
+                            weight = self.weights[neuron]
                             for i in range(len(weight)):
                                 # Calculate weightings
                                 weighted_sum += input_values[i]*weight[i]
@@ -64,14 +64,14 @@ class Network(object):
                         activations.append(output)
                         szs.append(array_of_weighted_sums)
                         count += 1
+                    print("Woohoo! Done!")
+                    print("Input values (Input layer): "+str(activations[0][0])+", "+str(activations[0][1]))
+                    print("Output from activation function (Hidden layer) (Bias of "+ str(self.biases[0])+" and "+ str(self.biases[1]) +"): " + str(activations[1][0]) +" and " + str(activations[1][1]))
+                    print("Output from activation function (Output layer) (Bias of "+ str(self.biases[2])+"): " + str(activations[2][0]))
+                    print("Cost: " + str(self.cost_derivative(activations, target)[1]))
                 
             print("Epoch: %d" % (epoch))
             epoch += 1
-        print("Done!")
-        print("Input values: "+str(activations[0][0])+", "+str(activations[0][1]))
-        print("Output from activation function (Bias of "+ str(self.biases[0])+"): " + str(activations[1][0]) +" and " + str(activations[1][1]))
-        print("Output from activation function (Bias of "+ str(self.biases[1])+"): " + str(activations[2][0]))
-        print("Cost derivative: " + cost_derivative(activations, ))
 
     def sigmoidprime(self,z):
         return (self.sigmoid(z) - (1 - self.sigmoid(z)))
@@ -85,16 +85,14 @@ class Network(object):
             delta_b.append([])
         return delta_w, delta_b
 
-    def cost_derivative(self,activation,y):
+    def cost_derivative(self, activation, target):
         qcost = []
         dcost = []
-        count = 0
-        for i in activation:
-            cost = i-y[count]
-            # Squared loss function
-            qcost.append(0.5* (cost ** 2))
-            dcost.append(cost)
-            count += 1
+        cost = target - activation[2][0]
+        # Squared loss function
+        qcost.append(0.5* (cost ** 2))
+        dcost.append(cost)
+
         total = 0
         for cost in qcost:
             total += cost
@@ -103,9 +101,9 @@ class Network(object):
     def set_target(self,letter):
         # Some weird conversion. Wouldn't this be more logically a bool???
         if letter == "B":
-            return  [0,1]
+            return  1
         else:
-            return [1,0]
+            return -1
 
     def activation_function(self,z):
         # Logistic function
