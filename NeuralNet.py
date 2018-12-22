@@ -45,7 +45,7 @@ class Network(object):
                     count = 0
                     szs = []
                     for layer in range(1,num_layers):
-                        layer_z = []
+                        array_of_weighted_sums = []
                         output = []
                         for neuron in range(size[layer]):
                             weighted_sum = 0
@@ -56,23 +56,23 @@ class Network(object):
                             for i in range(len(weight)):
                                 # Calculate weightings
                                 weighted_sum += input_values[i]*weight[i]
-                            layer_z.append(weighted_sum)
+                            array_of_weighted_sums.append(weighted_sum)
                             # Add bias
                             weighted_sum += self.biases[count]
                             # Calculate activation function
                             output.append(round(self.activation_function(weighted_sum),4))
                         activations.append(output)
-                        szs.append(layer_z)
+                        szs.append(array_of_weighted_sums)
                         count += 1
                 
             print("Epoch: %d" % (epoch))
             epoch += 1
-        print("Done!");
-        for layer in activations:
-            print("[")
-            [print(integer) for integer in layer]
-            print("]")
-    
+        print("Done!")
+        print("Input values: "+str(activations[0][0])+", "+str(activations[0][1]))
+        print("Output from activation function (Bias of "+ str(self.biases[0])+"): " + str(activations[1][0]) +" and " + str(activations[1][1]))
+        print("Output from activation function (Bias of "+ str(self.biases[1])+"): " + str(activations[2][0]))
+        print("Cost derivative: " + cost_derivative(activations, ))
+
     def sigmoidprime(self,z):
         return (self.sigmoid(z) - (1 - self.sigmoid(z)))
     
@@ -101,6 +101,7 @@ class Network(object):
         return total,dcost
 
     def set_target(self,letter):
+        # Some weird conversion. Wouldn't this be more logically a bool???
         if letter == "B":
             return  [0,1]
         else:
